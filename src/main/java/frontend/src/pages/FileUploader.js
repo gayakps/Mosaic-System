@@ -21,13 +21,14 @@ function FileUploader() {
 
         for (let index = 0; index < totalChunks; index++) {
             const formData = new FormData();
+            formData.append('user_id', "kim_seon_woo")
             formData.append('fileChunk', chunks[index]);
             formData.append('filename', filename);
             formData.append('chunkIndex', index);
             formData.append('totalChunks', totalChunks);
 
             try {
-                await axios.post('http://localhost:8080/api/chunk', formData, {
+                await axios.post('http://localhost:8080/api/chunk_upload', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },

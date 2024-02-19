@@ -1,5 +1,7 @@
 package gaya.pe.kr.mosaicsystem.video.controller;
 
+import gaya.pe.kr.mosaicsystem.video.service.VideoServiceManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,26 +20,32 @@ import java.util.concurrent.ConcurrentHashMap;
 @Controller
 @RequestMapping("/api")
 public class VideoUploadController {
-    public VideoUploadController() {
+
+    VideoServiceManager videoServiceManager;
+
+    public VideoUploadController(@Autowired VideoServiceManager videoServiceManager) {
         System.out.println("VideoUploadController Create");
+        this.videoServiceManager = videoServiceManager;
     }
 
+
+    @Deprecated( since = "release 1.0", forRemoval = true )
     @PostMapping("/upload")
-    public ResponseEntity<Boolean> handleFileUpload(@RequestParam("file")MultipartFile file) throws IOException {
+    public ResponseEntity<Boolean> handleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
         long size = file.getSize();
         System.out.printf("Content Type : %s Name : [%s] Size : %dMB\n", file.getContentType(), file.getOriginalFilename(), size/1024/1024);
         return ResponseEntity.ok(true);
     }
 
-
-    @PostMapping("/chunk")
+    @PostMapping("/chunk_upload")
     public ResponseEntity<Boolean> uploadFileChunk(
+            @RequestParam("user_id") String userId,
             @RequestParam("fileChunk") MultipartFile chunk,
             @RequestParam("filename") String filename,
             @RequestParam("chunkIndex") Integer chunkIndex,
             @RequestParam("totalChunks") Integer totalChunks) throws IOException {
 
-        System.out.printf("Bytes Chunk(%d/%d)\n",totalChunks, chunkIndex);
+        System.out.printf("(%s) Bytes Chunk(%d/%d)\n", Thread.currentThread().getName(),totalChunks, chunkIndex);
 
         Path tempPath = Path.of("/Users/seonwoo/Desktop/temp/"+filename + ".part" + chunkIndex);
         File tempFile = tempPath.toFile();
@@ -58,13 +66,6 @@ public class VideoUploadController {
                     System.out.printf("Delete File : %s\n", partFile.getAbsolutePath());
                 }
             }
-
-//            // After merging all chunks, delete the temp directory
-//            Files.walk(tempPath)
-//                    .sorted(Comparator.reverseOrder())
-//                    .map(Path::toFile)
-//                    .forEach(File::delete);
-
 
             System.out.printf("Path : %s 에 영상을 저장했습니다\n", mergedFile.getAbsolutePath());
 
