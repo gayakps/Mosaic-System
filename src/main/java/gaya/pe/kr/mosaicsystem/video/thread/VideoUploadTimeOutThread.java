@@ -22,8 +22,6 @@ public class VideoUploadTimeOutThread extends Thread {
 
     @Getter
     private final HashMap<String, UserUploadVideoChunk> userUploadVideoChunkHashMap = new HashMap<>();
-
-
     @Override
     public void run() {
 
