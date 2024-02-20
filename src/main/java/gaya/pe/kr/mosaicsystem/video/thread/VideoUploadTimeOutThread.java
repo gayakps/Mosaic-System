@@ -1,18 +1,23 @@
 package gaya.pe.kr.mosaicsystem.video.thread;
 
+import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class VideoUploadTimeOutThread extends Thread {
 
-    private final HashSet<String> userIdHashSet = new HashSet<>();
+
+    @Getter
+    private final HashMap<String, UserUploadVideoChunk> userUploadVideoChunkHashMap = new HashMap<>();
+
 
     @Override
     public void run() {
 
     }
 
-    public HashSet<String> getUserIdHashSet() {
-        return userIdHashSet;
-    }
+
+
 }
