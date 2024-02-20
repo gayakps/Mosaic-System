@@ -1,7 +1,9 @@
 package gaya.pe.kr.mosaicsystem.video.service;
 
 import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
+import gaya.pe.kr.mosaicsystem.video.service.io.VideoFileManager;
 import gaya.pe.kr.mosaicsystem.video.thread.VideoUploadTimeOutThread;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,15 +12,20 @@ public class VideoServiceManager {
 
     VideoUploadTimeOutThread videoUploadTimeOutThread;
 
-    public VideoServiceManager() {
+    VideoFileManager videoFileManager;
 
-        UserUploadVideoChunk userUploadVideoChunk = new UserUploadVideoChunk("", 0);
-        videoUploadTimeOutThread = new VideoUploadTimeOutThread();
-
+    public VideoServiceManager(@Autowired VideoFileManager videoFileManager) {
+        this.videoFileManager = videoFileManager;
+        this.videoFileManager.init(this);
+        videoUploadTimeOutThread = new VideoUploadTimeOutThread(videoFileManager);
+        videoUploadTimeOutThread.start();
     }
 
-    public void addUploadUser(String userId, int chunkSize) {
-        videoUploadTimeOutThread.getUserUploadVideoChunkHashMap().put(userId, new UserUploadVideoChunk(userId, chunkSize));
+    public void addUploadUser(UserUploadVideoChunk userUploadVideoChunk) {
+        String userId = userUploadVideoChunk.getUserId();
+        videoFileManager.getChunkFolder(userUploadVideoChunk).mkdirs(); // Chunk 폴더를 만들어줍니다
+        videoFileManager.getResultFolder(userUploadVideoChunk).mkdirs(); // Result Folder 를 만들어 줍니다
+        videoUploadTimeOutThread.getUserUploadVideoChunkHashMap().put(userId, userUploadVideoChunk);
     }
 
     public boolean isUploadUser(String userId) {

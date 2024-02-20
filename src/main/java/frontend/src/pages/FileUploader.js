@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid'; // uuid 라이브러리에서 UUID 생성 함수를 가져옵니다.
 import axios from 'axios';
 
 function FileUploader() {
     const [selectedFile, setSelectedFile] = useState(null);
     const chunkSize = 5 * 1024 * 1024; // 5MB
+    const uniqueFileUUID = uuidv4(); // 파일 업로드 세션마다 고유한 UUID를 생성합니다.
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -21,11 +23,13 @@ function FileUploader() {
 
         for (let index = 0; index < totalChunks; index++) {
             const formData = new FormData();
-            formData.append('user_id', "kim_seon_woo")
+            formData.append('userId', "kim_seon_woo")
+            formData.append('fileUUID', uniqueFileUUID); // 생성된 UUID를 폼 데이터에 추가합니다.
+            formData.append('fileName', filename);
+            formData.append('chunkSize', totalChunks);
+            formData.append('nowChunkIndex', index);
             formData.append('fileChunk', chunks[index]);
-            formData.append('filename', filename);
-            formData.append('chunkIndex', index);
-            formData.append('totalChunks', totalChunks);
+
 
             try {
                 await axios.post('http://localhost:8080/api/chunk_upload', formData, {

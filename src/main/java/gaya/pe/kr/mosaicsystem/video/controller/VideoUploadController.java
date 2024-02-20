@@ -1,9 +1,12 @@
 package gaya.pe.kr.mosaicsystem.video.controller;
 
+import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
 import gaya.pe.kr.mosaicsystem.video.service.VideoServiceManager;
+import gaya.pe.kr.mosaicsystem.video.service.io.VideoFileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,10 +25,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VideoUploadController {
 
     VideoServiceManager videoServiceManager;
+    VideoFileManager videoFileManager;
 
-    public VideoUploadController(@Autowired VideoServiceManager videoServiceManager) {
+    public VideoUploadController(
+            @Autowired VideoServiceManager videoServiceManager,
+            @Autowired VideoFileManager videoFileManager
+    ) {
         System.out.println("VideoUploadController Create");
         this.videoServiceManager = videoServiceManager;
+        this.videoFileManager = videoFileManager;
     }
 
 
@@ -38,37 +46,32 @@ public class VideoUploadController {
     }
 
     @PostMapping("/chunk_upload")
-    public ResponseEntity<Boolean> uploadFileChunk(
-            @RequestParam("user_id") String userId,
-            @RequestParam("fileChunk") MultipartFile chunk,
-            @RequestParam("filename") String filename,
-            @RequestParam("chunkIndex") Integer chunkIndex,
-            @RequestParam("totalChunks") Integer totalChunks) throws IOException {
+    public ResponseEntity<Boolean> uploadFileChunk(@RequestParam("fileChunk") MultipartFile chunk,
+            @ModelAttribute UserUploadVideoChunk userUploadVideoChunk) throws IOException {
+
+        int totalChunks = userUploadVideoChunk.getChunkSize();
+        int chunkIndex = userUploadVideoChunk.getNowChunkIndex();
 
         System.out.printf("(%s) Bytes Chunk(%d/%d)\n", Thread.currentThread().getName(),totalChunks, chunkIndex);
 
-        Path tempPath = Path.of("/Users/seonwoo/Desktop/temp/"+filename + ".part" + chunkIndex);
-        File tempFile = tempPath.toFile();
-        Files.copy(chunk.getInputStream(), tempPath);
-        System.out.printf("Chunk File : %s\n", tempFile.getAbsolutePath());
+        Path tempFilePath = videoFileManager.getUserUploadTempFilePath(userUploadVideoChunk);
+
+        String userId = userUploadVideoChunk.getUserId();
+        if ( videoServiceManager.isUploadUser(userId) ) {
+            videoServiceManager.getUserUploadVideoChunk(userId).addChunkIndex(chunkIndex);
+            System.out.println("Update Upload User");
+        } else {
+            videoServiceManager.addUploadUser(userUploadVideoChunk);
+            System.out.println("ADD Upload User");
+        }
+
+        Files.copy(chunk.getInputStream(), tempFilePath);
+        System.out.printf("Chunk File : %s\n", tempFilePath.toFile().getAbsolutePath());
 
         if ( totalChunks == chunkIndex+1 ) {
             // 만일 모든 청크에 도달했다면
             System.out.println("모든 청크에 도달했습니다 파일 저장을 시도합니다");
-
-            // All chunks are uploaded, start merging
-            File mergedFile = new File(tempPath.getParent().resolve(filename+"_After_Save.mov").toString());
-            try (FileOutputStream fos = new FileOutputStream(mergedFile, true)) {
-                for (int i = 0; i < totalChunks; i++) {
-                    File partFile = new File(tempPath.getParent().resolve(filename + ".part" + i).toString());
-                    Files.copy(partFile.toPath(), fos);
-                    partFile.delete(); // Delete the part file after merging
-                    System.out.printf("Delete File : %s\n", partFile.getAbsolutePath());
-                }
-            }
-
-            System.out.printf("Path : %s 에 영상을 저장했습니다\n", mergedFile.getAbsolutePath());
-
+            videoFileManager.mergeVideoChunk(userUploadVideoChunk);
         }
 
         return ResponseEntity.ok(true);

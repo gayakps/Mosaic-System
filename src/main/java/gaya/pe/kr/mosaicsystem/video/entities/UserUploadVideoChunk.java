@@ -14,13 +14,18 @@ public class UserUploadVideoChunk {
 
     @NonNull
     private final String userId;
+    @NonNull
+    private final String fileUUID;
+    @NonNull
+    private final String fileName;
+
     private final int chunkSize;
 
     @Setter
     private int nowChunkIndex; // 변경 가능하도록 setter 제공
 
     @Setter
-    private Date updateDate; // 필요에 따라 변경 가능
+    private Date updateDate = new Date(); // 필요에 따라 변경 가능
 
     @Synchronized
     public boolean addChunkIndex(int nowChunkIndex) {
