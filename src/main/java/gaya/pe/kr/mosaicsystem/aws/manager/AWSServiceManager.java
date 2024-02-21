@@ -6,9 +6,18 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.model.*;
+import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.*;
+import software.amazon.awssdk.services.ec2.model.Tag;
 
+import java.awt.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +26,15 @@ public class AWSServiceManager {
 
 
     Ec2Client ec2Client;
+    CloudWatchClient cloudWatchClient;
 
     public AWSServiceManager() {
         this.ec2Client = Ec2Client.builder()
+                .region(Region.AP_NORTHEAST_2)
+                //.credentialsProvider(ProfileCredentialsProvider.create())
+                .build();
+        this.cloudWatchClient = CloudWatchClient
+                .builder()
                 .region(Region.AP_NORTHEAST_2)
                 //.credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
@@ -81,10 +96,10 @@ public class AWSServiceManager {
 
         for (Reservation reservation : response.reservations()) {
             for (Instance instance : reservation.instances()) {
-                if ( instanceId.equals(instance.instanceId()))  {
+                if (instanceId.equals(instance.instanceId())) {
                     return instance;
                 }
-             }
+            }
         }
 
         return null;
@@ -155,6 +170,43 @@ public class AWSServiceManager {
 
     }
 
+    public void getState(String instanceId, String namespace, String metricName) {
+
+        int period = 30;
+        String stat = "Average";
+
+        ZoneId ZONE_ID = ZoneId.of("Asia/Seoul");
+        int dayRange = 3;
+        Instant startTimeInstant = LocalDate.now(ZONE_ID).minusDays(dayRange).atStartOfDay(ZONE_ID).toInstant();
+        Instant endTimeInstant = ZonedDateTime.now(ZONE_ID).toInstant();
+
+        List<MetricDataQuery> metricDataQueryList = new ArrayList<>();
+        int numbering = 0;
+        Dimension dimension = Dimension.builder().name("InstanceId").value(instanceId).build();
+        Metric metric = Metric.builder().namespace(namespace).dimensions(dimension).metricName(metricName).build();
+        MetricStat metricStat = MetricStat.builder().metric(metric).period(period).stat(stat).build();
+        MetricDataQuery metricDataQuery = MetricDataQuery.builder().metricStat(metricStat).id("m" + (numbering++)).build();
+        metricDataQueryList.add(metricDataQuery);
+
+        GetMetricDataRequest request = GetMetricDataRequest.builder().metricDataQueries(metricDataQueryList)
+                .startTime(startTimeInstant)
+                .endTime(endTimeInstant)
+                .build();
+        GetMetricDataResponse response = cloudWatchClient.getMetricData(request);
+
+        List<Instant> timestamps = null;
+        List<Double> values = null;
+
+        for (MetricDataResult result : response.metricDataResults()) {
+            timestamps = result.timestamps();
+            values = result.values();
+            System.out.printf("id : %s%n", result.id());
+            for (int i = values.size() - 1; i >= 0; i--) {
+                System.out.printf("timestamp : %s, value : %s%n", timestamps.get(i).atZone(ZONE_ID), values.get(i));
+            }
+        }
+
+    }
 
 
 }

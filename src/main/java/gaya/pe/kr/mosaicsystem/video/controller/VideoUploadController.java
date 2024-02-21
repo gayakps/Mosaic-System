@@ -4,6 +4,7 @@ import gaya.pe.kr.mosaicsystem.aws.manager.AWSServiceManager;
 import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
 import gaya.pe.kr.mosaicsystem.video.service.VideoServiceManager;
 import gaya.pe.kr.mosaicsystem.video.service.io.VideoFileManager;
+import gaya.pe.kr.mosaicsystem.video.thread.VideoProcessingEC2ComputeTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.ec2.model.Instance;
+import software.amazon.awssdk.services.ec2.model.InstanceNetworkInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -79,8 +83,15 @@ public class VideoUploadController {
             System.out.println("모든 청크에 도달했습니다 파일 저장을 시도합니다");
             videoFileManager.mergeVideoChunk(userUploadVideoChunk);
 
+
             // 이용자를 다른 곳으로 보낸다 그 이후 무언가 작업이 처리되도록 설정
             Instance instance = awsServiceManager.createEC2Instance(String.format("%s-Mosaic-Compute", userId)); // TODO 해당 작업을 Async 로 던져야함
+
+            VideoProcessingEC2ComputeTask videoProcessingEC2ComputeTask = new VideoProcessingEC2ComputeTask(userUploadVideoChunk, instance);
+
+
+
+            instance.state().name();
 
         }
 

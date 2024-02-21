@@ -11,6 +11,11 @@ public class VideoProcessingEC2ComputeTask implements Runnable {
     UserUploadVideoChunk userUploadVideoChunk;
     Instance instance;
 
+    public VideoProcessingEC2ComputeTask(UserUploadVideoChunk userUploadVideoChunk, Instance instance) {
+        this.userUploadVideoChunk = userUploadVideoChunk;
+        this.instance = instance;
+    }
+
     @Override
     public void run() {
 
