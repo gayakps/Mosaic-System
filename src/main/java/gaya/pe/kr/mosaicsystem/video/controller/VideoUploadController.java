@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,8 +66,10 @@ public class VideoUploadController {
         System.out.printf("파일 명 : %s [ USER ID : %s ] Success\n", userSuccessUploadNotify.getUserVideo().getFileName(), userSuccessUploadNotify.getUserVideo().getUserId());
         EC2UserTag ec2UserTag = new EC2UserTag();
         ec2UserTag.addLine("sudo apt update");
-        ec2UserTag.addLine("sudo apt install awscli");
-        ec2UserTag.addLine(String.format("aws s3 cp s3://%s/%s/'%s' /home/ubuntu/%s", awsServiceManager.getAwss3Manager().getRAW_VIDEO_MOSAIC_USER_UPLOAD_BUCKET(), userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName(), userSuccessUploadNotify.getUserVideo().getFileName()));
+        ec2UserTag.addLine("sudo apt install -y awscli");
+        ec2UserTag.addLine("echo @@@@ 김선우 테스트 입니다 @@@@");
+        ec2UserTag.addLine(String.format("echo %s - %s - %s", userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName(), new Date().toString()));
+        ec2UserTag.addLine(String.format("aws s3 cp s3://%s/%s/'%s' /home/ubuntu/'%s'", awsServiceManager.getAwss3Manager().getRAW_VIDEO_MOSAIC_USER_UPLOAD_BUCKET(), userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName(), userSuccessUploadNotify.getUserVideo().getFileName()));
         awsServiceManager.getAwsec2Manager().createEC2Instance(awsServiceManager.getEc2Client(), "Test-"+new Random().nextInt(1000)+1, ec2UserTag);
         return ResponseEntity.ok().build();
     }
