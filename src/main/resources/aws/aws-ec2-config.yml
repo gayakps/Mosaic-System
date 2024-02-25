@@ -1,11 +1,11 @@
 ec2:
   imageId: ami-0f3a440bbcff3d043
-  instance-type: t2.micro
-  max-count: 1
-  min-count: 1
-  security-group: MosaicUserAdd
-  ebs-optimized: false
-  user_tag:
+  instanceType: t2.micro
+  maxCount: 1
+  minCount: 1
+  securityGroup: MosaicUserAdd
+  ebsOptimized: false
+  userTag:
     - "sudo apt update"
     - "sudo apt install -y awscli"
     - "(%time%) echo %user_id% 님의 새로운 파일인 %file_name% 을 다운로드 합니다"

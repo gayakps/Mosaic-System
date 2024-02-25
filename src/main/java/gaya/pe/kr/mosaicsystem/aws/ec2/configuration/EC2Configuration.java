@@ -18,7 +18,6 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
-//@PropertySource(value = "classpath:aws/aws-ec2-config.yml", factory = YamlPropertySourceFactory.class)
 public class EC2Configuration {
 
    private static final Logger logger = LoggerFactory.getLogger(EC2Configuration.class);
