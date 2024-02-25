@@ -29,6 +29,10 @@ public class TimeUtil {
         return ( ( ( now.getTime() - date.getTime()) / 1000 ) / 60 ) ;
     }
 
+    public static String getNow() {
+        return simpleDateFormat.format(new Date());
+    }
+
     /**
      *
      * @param date 정해진 시간

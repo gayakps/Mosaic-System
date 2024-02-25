@@ -1,7 +1,7 @@
 package gaya.pe.kr.mosaicsystem.aws.manager;
 
 import gaya.pe.kr.mosaicsystem.aws.ec2.manager.AWSEC2Manager;
-import gaya.pe.kr.mosaicsystem.aws.s3.AWSS3Manager;
+import gaya.pe.kr.mosaicsystem.aws.s3.manager.AWSS3Manager;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

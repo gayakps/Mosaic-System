@@ -1,11 +1,14 @@
 package gaya.pe.kr.mosaicsystem.aws.ec2.manager;
 
+import gaya.pe.kr.mosaicsystem.aws.ec2.configuration.EC2Configuration;
 import gaya.pe.kr.mosaicsystem.aws.ec2.model.EC2UserTag;
+import gaya.pe.kr.mosaicsystem.aws.s3.configuration.S3Configuration;
 import gaya.pe.kr.mosaicsystem.video.controller.VideoUploadController;
 import gaya.pe.kr.mosaicsystem.video.entities.UserSuccessUploadNotify;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
@@ -28,31 +31,42 @@ import java.util.List;
 public class AWSEC2Manager {
 
     private static final Logger logger = LoggerFactory.getLogger(AWSEC2Manager.class);
+    private final EC2Configuration ec2Configuration;
+    private final S3Configuration s3Configuration;
 
-    final String AMI_ID = "ami-of"
+    public AWSEC2Manager(@Autowired EC2Configuration ec2Configuration, @Autowired S3Configuration s3Configuration) {
+        this.ec2Configuration = ec2Configuration;
+        this.s3Configuration = s3Configuration;
+    }
 
     @Nullable
-    public Instance createEC2Instance(UserSuccessUploadNotify userSuccessUploadNotify, Ec2Client ec2Client, String name, EC2UserTag ec2UserTag) {
+    public Instance createEC2Instance(UserSuccessUploadNotify userSuccessUploadNotify, Ec2Client ec2Client, String name) {
+
+        EC2UserTag ec2UserTag = new EC2UserTag();
+
+        ec2UserTag.addLines(ec2Configuration.getUserTag(), s3Configuration.getRawVideoContentsMosaicUserUploadBucketName(), userSuccessUploadNotify);
 
         IamInstanceProfileSpecification iamInstanceProfile = IamInstanceProfileSpecification.builder()
-                .name("Mosaic_EC2_S3_Full_Access")  // IAM 역할 이름 지정
+                .name(ec2Configuration.getIamUserName())  // IAM 역할 이름 지정
                 .build();
 
         RunInstancesRequest runRequest = RunInstancesRequest.builder()
-                .imageId("ami-0f3a440bbcff3d043")
-                .instanceType(InstanceType.T2_MICRO)
-                .maxCount(1)
-                .minCount(1)
-                .securityGroups("MosaicUserAdd")
-                .ebsOptimized(false)
+                .imageId(ec2Configuration.getImageId())
+                .instanceType(InstanceType.valueOf(ec2Configuration.getInstanceType()))
+                .maxCount(ec2Configuration.getMaxCount())
+                .minCount(ec2Configuration.getMinCount())
+                .securityGroups(ec2Configuration.getSecurityGroup())
+                .ebsOptimized(ec2Configuration.isEbsOptimized())
                 .userData(ec2UserTag.getValue())
                 .iamInstanceProfile(iamInstanceProfile)
                 .build();
 
 
         RunInstancesResponse response = ec2Client.runInstances(runRequest);
+
         Instance instance = response.instances().get(0);
         String instanceId = instance.instanceId();
+
         try {
             System.out.printf("START EC2 Name : %s Tag : %s\n", name, new String(Base64.getDecoder().decode(ec2UserTag.getValue())) );
             System.out.printf("Successfully started EC2 Instance %s based on AMI %s", instanceId, "none");

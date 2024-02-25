@@ -42,14 +42,8 @@ public class VideoUploadController {
 
     @PostMapping("/success-upload-file")
     public ResponseEntity<?> successUploadRawVideo(@RequestBody UserSuccessUploadNotify userSuccessUploadNotify) {
-        EC2UserTag ec2UserTag = new EC2UserTag();
-        ec2UserTag.addLine("sudo apt update");
-        ec2UserTag.addLine("sudo apt install -y awscli");
-        ec2UserTag.addLine("echo @@@@ 김선우 테스트 입니다 @@@@");
-        ec2UserTag.addLine(String.format("echo %s - %s - %s", userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName(), new Date().toString()));
-        ec2UserTag.addLine(String.format("aws s3 cp s3://%s/%s/'%s' /home/ubuntu/'%s'", awsServiceManager.getAwss3Manager().getRAW_VIDEO_MOSAIC_USER_UPLOAD_BUCKET(), userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName(), userSuccessUploadNotify.getUserVideo().getFileName()));
         logger.info("File Name : {} User ID : {}", userSuccessUploadNotify.getUserVideo().getFileName(), userSuccessUploadNotify.getUserVideo().getUserId());
-        awsServiceManager.getAwsec2Manager().createEC2Instance(userSuccessUploadNotify, awsServiceManager.getEc2Client(), "Test-" + new Random().nextInt(1000) + 1, ec2UserTag);
+        awsServiceManager.getAwsec2Manager().createEC2Instance(userSuccessUploadNotify, awsServiceManager.getEc2Client(), "Test-" + new Random().nextInt(1000) + 1);
         return ResponseEntity.ok().build();
     }
 

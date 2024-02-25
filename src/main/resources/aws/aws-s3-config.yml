@@ -1,0 +1,3 @@
+s3:
+  raw_video_contents_mosaic_user_upload_Bucket_name: "mosaic-user-upload"
+  presigned_URL_valid_minutes: 60
