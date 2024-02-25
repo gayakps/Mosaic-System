@@ -1,7 +1,10 @@
-package gaya.pe.kr.mosaicsystem.aws.manager.s3;
+package gaya.pe.kr.mosaicsystem.aws.s3;
 
+import gaya.pe.kr.mosaicsystem.aws.ec2.manager.AWSEC2Manager;
 import gaya.pe.kr.mosaicsystem.video.entities.UserUploadRequest;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -20,8 +23,9 @@ public class AWSS3Manager {
 
     final String RAW_VIDEO_MOSAIC_USER_UPLOAD_BUCKET = "mosaic-user-upload";
 
-    public URL generatePreSignedURL(String userId, String fileName) {
+    private static final Logger logger = LoggerFactory.getLogger(AWSS3Manager.class);
 
+    public URL generatePreSignedURL(String userId, String fileName) {
 
         String objectKey = userId + "/" + fileName;
 
@@ -54,7 +58,6 @@ public class AWSS3Manager {
                 .bucket(RAW_VIDEO_MOSAIC_USER_UPLOAD_BUCKET)
                 .key(userUploadRequest.getUserVideo().getUserId()+"/"+userUploadRequest.getUserVideo().getFileName())
                 .build();
-
         return s3Client.deleteObject(deleteObjectRequest);
     }
 

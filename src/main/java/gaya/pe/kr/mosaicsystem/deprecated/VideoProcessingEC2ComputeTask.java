@@ -1,6 +1,5 @@
-package gaya.pe.kr.mosaicsystem.video.thread;
+package gaya.pe.kr.mosaicsystem.deprecated;
 
-import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
 import software.amazon.awssdk.services.ec2.model.Instance;
 
 /**

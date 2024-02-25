@@ -1,9 +1,6 @@
-package gaya.pe.kr.mosaicsystem.video.service.io;
+package gaya.pe.kr.mosaicsystem.deprecated;
 
-import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
-import gaya.pe.kr.mosaicsystem.video.service.VideoServiceManager;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;

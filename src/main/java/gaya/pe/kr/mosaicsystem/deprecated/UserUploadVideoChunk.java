@@ -1,4 +1,4 @@
-package gaya.pe.kr.mosaicsystem.video.entities;
+package gaya.pe.kr.mosaicsystem.deprecated;
 
 
 import gaya.pe.kr.mosaicsystem.infra.util.TimeUtil;

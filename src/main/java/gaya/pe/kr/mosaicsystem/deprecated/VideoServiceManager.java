@@ -1,8 +1,5 @@
-package gaya.pe.kr.mosaicsystem.video.service;
+package gaya.pe.kr.mosaicsystem.deprecated;
 
-import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
-import gaya.pe.kr.mosaicsystem.video.service.io.VideoFileManager;
-import gaya.pe.kr.mosaicsystem.video.thread.VideoUploadTimeOutThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

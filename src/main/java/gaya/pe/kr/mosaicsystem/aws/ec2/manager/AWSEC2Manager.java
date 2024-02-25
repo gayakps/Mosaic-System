@@ -1,7 +1,11 @@
-package gaya.pe.kr.mosaicsystem.aws.manager.ec2;
+package gaya.pe.kr.mosaicsystem.aws.ec2.manager;
 
-import gaya.pe.kr.mosaicsystem.aws.manager.ec2.model.EC2UserTag;
+import gaya.pe.kr.mosaicsystem.aws.ec2.model.EC2UserTag;
+import gaya.pe.kr.mosaicsystem.video.controller.VideoUploadController;
+import gaya.pe.kr.mosaicsystem.video.entities.UserSuccessUploadNotify;
 import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
@@ -23,9 +27,12 @@ import java.util.List;
 @Service
 public class AWSEC2Manager {
 
+    private static final Logger logger = LoggerFactory.getLogger(AWSEC2Manager.class);
+
+    final String AMI_ID = "ami-of"
 
     @Nullable
-    public Instance createEC2Instance(Ec2Client ec2Client, String name, EC2UserTag ec2UserTag) {
+    public Instance createEC2Instance(UserSuccessUploadNotify userSuccessUploadNotify, Ec2Client ec2Client, String name, EC2UserTag ec2UserTag) {
 
         IamInstanceProfileSpecification iamInstanceProfile = IamInstanceProfileSpecification.builder()
                 .name("Mosaic_EC2_S3_Full_Access")  // IAM 역할 이름 지정
@@ -46,19 +53,10 @@ public class AWSEC2Manager {
         RunInstancesResponse response = ec2Client.runInstances(runRequest);
         Instance instance = response.instances().get(0);
         String instanceId = instance.instanceId();
-        Tag tag = Tag.builder()
-                .key("Name")
-                .value(name)
-                .build();
-
-        CreateTagsRequest tagRequest = CreateTagsRequest.builder()
-                .resources(instanceId)
-                .tags(tag)
-                .build();
         try {
-            ec2Client.createTags(tagRequest);
             System.out.printf("START EC2 Name : %s Tag : %s\n", name, new String(Base64.getDecoder().decode(ec2UserTag.getValue())) );
             System.out.printf("Successfully started EC2 Instance %s based on AMI %s", instanceId, "none");
+            logger.info("Mosaic-EC2-{} Start InstanceId-{} UserId-{} File_Name-{}", name, instanceId, userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName());
             return instance;
         } catch (Ec2Exception e) {
             System.err.println(e.awsErrorDetails().errorMessage());
@@ -102,7 +100,6 @@ public class AWSEC2Manager {
 
         boolean done = false;
         String nextToken = null;
-
 
         List<Instance> instances = new ArrayList<>();
 

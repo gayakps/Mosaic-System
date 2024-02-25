@@ -1,12 +1,9 @@
-package gaya.pe.kr.mosaicsystem.video.thread;
+package gaya.pe.kr.mosaicsystem.deprecated;
 
-import gaya.pe.kr.mosaicsystem.video.entities.UserUploadVideoChunk;
-import gaya.pe.kr.mosaicsystem.video.service.io.VideoFileManager;
 import lombok.Getter;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 public class VideoUploadTimeOutThread extends Thread {
