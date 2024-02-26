@@ -15,6 +15,7 @@ import java.util.List;
 
 @Configuration
 @ConfigurationProperties(prefix = "ec2")
+@PropertySource( value = "classpath:aws/application-aws-ec2-config.yml", factory = YamlPropertySourceFactory.class)
 @ToString
 @Getter
 @Setter
@@ -26,12 +27,9 @@ public class EC2Configuration {
    private String instanceType;
    private int maxCount;
    private int minCount;
-   private String iamUserName;
+   private String iamRoleName;
    private String securityGroup;
    private boolean ebsOptimized;
    private List<String> userTag;
 
-   public EC2Configuration() {
-      logger.info(this.toString() + " Created");
-   }
 }

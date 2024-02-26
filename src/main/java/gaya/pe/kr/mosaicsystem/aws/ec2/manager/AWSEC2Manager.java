@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class AWSEC2Manager {
@@ -44,15 +45,18 @@ public class AWSEC2Manager {
 
         EC2UserTag ec2UserTag = new EC2UserTag();
 
+        logger.info("@@@@ TEST(S3 INFO) :: {} @@@@", s3Configuration.toString());
+        logger.info("@@@@ TEST(EC2 INFO) :: {} @@@@", ec2Configuration.toString());
+
         ec2UserTag.addLines(ec2Configuration.getUserTag(), s3Configuration.getRawVideoContentsMosaicUserUploadBucketName(), userSuccessUploadNotify);
 
         IamInstanceProfileSpecification iamInstanceProfile = IamInstanceProfileSpecification.builder()
-                .name(ec2Configuration.getIamUserName())  // IAM 역할 이름 지정
+                .name(ec2Configuration.getIamRoleName())  // IAM 역할 이름 지정
                 .build();
 
         RunInstancesRequest runRequest = RunInstancesRequest.builder()
                 .imageId(ec2Configuration.getImageId())
-                .instanceType(InstanceType.valueOf(ec2Configuration.getInstanceType()))
+                .instanceType(InstanceType.valueOf(ec2Configuration.getInstanceType().toUpperCase(Locale.ROOT)))
                 .maxCount(ec2Configuration.getMaxCount())
                 .minCount(ec2Configuration.getMinCount())
                 .securityGroups(ec2Configuration.getSecurityGroup())
@@ -61,15 +65,24 @@ public class AWSEC2Manager {
                 .iamInstanceProfile(iamInstanceProfile)
                 .build();
 
-
         RunInstancesResponse response = ec2Client.runInstances(runRequest);
 
         Instance instance = response.instances().get(0);
         String instanceId = instance.instanceId();
 
+
+        Tag tag = Tag.builder()
+                .key("Name")
+                .value(name)
+                .build();
+
+        CreateTagsRequest tagRequest = CreateTagsRequest.builder()
+                .resources(instanceId)
+                .tags(tag)
+                .build();
+
         try {
-            System.out.printf("START EC2 Name : %s Tag : %s\n", name, new String(Base64.getDecoder().decode(ec2UserTag.getValue())) );
-            System.out.printf("Successfully started EC2 Instance %s based on AMI %s", instanceId, "none");
+            ec2Client.createTags(tagRequest);
             logger.info("Mosaic-EC2-{} Start InstanceId-{} UserId-{} File_Name-{}", name, instanceId, userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName());
             return instance;
         } catch (Ec2Exception e) {

@@ -16,7 +16,7 @@ import org.springframework.context.annotation.PropertySource;
 @Getter
 @Setter
 @ToString
-@PropertySource(value = "classpath:aws/aws-s3-config.yml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:aws/application-aws-s3-config.yml", factory = YamlPropertySourceFactory.class)
 public class S3Configuration {
 
     private static final Logger logger = LoggerFactory.getLogger(S3Configuration.class);
@@ -24,7 +24,4 @@ public class S3Configuration {
     private String rawVideoContentsMosaicUserUploadBucketName;
     private int presignedURLValidMinutes;
 
-    public S3Configuration() {
-        logger.info(this.toString() + " Created");
-    }
 }
