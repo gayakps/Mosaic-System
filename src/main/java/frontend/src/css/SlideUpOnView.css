@@ -1,0 +1,12 @@
+.slideUp {
+    transform: translateY(40px);
+    opacity: 10%;
+    transition: opacity 1s, transform 1s;
+}
+.visible {
+    transform: translateY(10px);
+    opacity: 1;
+}
+.growWidth {
+    transition: width 5s; /* 너비 변화에 대한 전환 효과 설정 */
+}
