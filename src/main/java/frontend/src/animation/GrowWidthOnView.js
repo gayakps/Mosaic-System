@@ -10,7 +10,7 @@ const GrowWidthOnView = ({ children }) => {
     return (
         <div
             ref={elementRef}
-            style={{ width: isVisible ? '50%' : '10%' }}
+            style={{ width: isVisible ? '100px' : '10px' }}
             className="growWidth"
         >
             {children}

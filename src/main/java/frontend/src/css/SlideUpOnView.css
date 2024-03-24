@@ -8,5 +8,5 @@
     opacity: 1;
 }
 .growWidth {
-    transition: width 5s; /* 너비 변화에 대한 전환 효과 설정 */
+    transition: width 1ms; /* 너비 변화에 대한 전환 효과 설정 */
 }

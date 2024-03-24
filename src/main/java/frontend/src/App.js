@@ -1,6 +1,6 @@
 import './App.css';
-import SlideUpOnView from "./component/SlideUpOnView";
-import GrowWidthOnView from "./component/GrowWidthOnView";
+import SlideUpOnView from "./animation/SlideUpOnView";
+import GrowWidthOnView from "./animation/GrowWidthOnView";
 import myImage from './css/logo512.png'
 import myImage2 from './css/logo192.png'
 
