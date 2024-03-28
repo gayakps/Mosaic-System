@@ -1,0 +1,13 @@
+network:
+  host: localhost # RabbitMQ host ip
+  port: 5672 # RabbitMQ port
+  username : gayasoft # RabbitMQ 웹 관리 콘솔 아이디
+  password: 153456 # RabbitMQ 웹 관리 콘솔 비밀번호
+
+rabbitmq:
+  queue:
+    name: Gaya-Soft # 사용할 queue 이름
+  exchange:
+    name: sample-exchange # 사용할 exchange 이름
+  routing:
+    key : key
