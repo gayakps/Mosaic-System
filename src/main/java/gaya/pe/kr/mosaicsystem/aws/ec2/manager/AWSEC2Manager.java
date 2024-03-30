@@ -6,6 +6,7 @@ import gaya.pe.kr.mosaicsystem.aws.s3.configuration.S3Configuration;
 import gaya.pe.kr.mosaicsystem.video.controller.VideoUploadController;
 import gaya.pe.kr.mosaicsystem.video.entities.UserSuccessUploadNotify;
 import jakarta.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
