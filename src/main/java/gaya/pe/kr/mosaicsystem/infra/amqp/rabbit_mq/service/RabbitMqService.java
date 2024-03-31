@@ -1,7 +1,9 @@
 package gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.service;
 
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.MessageSimilarity;
-import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.MessageTotalFrame;
+import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.SuccessUploadMessage;
+import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.VideoInfoMessage;
+import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.top.AbstractMosaicProcessorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -40,15 +42,26 @@ public class RabbitMqService {
      * 1. Queue 에서 메세지를 구독
      **/
     @RabbitListener(queues = "${rabbitmq.queue.name}")
-    public void receiveMessage(MessageTotalFrame msg) {
+    public void receiveMessage(AbstractMosaicProcessorMessage msg) {
+
         amount++;
-        log.info("(MessageTotalFrame) Received Message : {} ( Amount : {} )", msg, amount);
+
+        if (msg instanceof MessageSimilarity) {
+            MessageSimilarity messageSimilarity = (MessageSimilarity) msg;
+            log.info("(MessageSimilarity) Received Message : {} ( Amount : {} )", messageSimilarity, amount);
+            // SIMILARITY_INFO 메시지 처리 로직
+        } else if (msg instanceof SuccessUploadMessage) {
+            SuccessUploadMessage successUploadMessage = (SuccessUploadMessage) msg;
+            log.info("(SuccessUploadMessage) Received Message : {} ( Amount : {} )", successUploadMessage, amount);
+            // SUCCESS_UPLOAD_MESSAGE 메시지 처리 로직
+        } else if (msg instanceof VideoInfoMessage) {
+            VideoInfoMessage videoInfoMessage = (VideoInfoMessage) msg;
+            log.info("(VideoInfoMessage) Received Message : {} ( Amount : {} )", videoInfoMessage, amount);
+            // VIDEO_INFO 메시지 처리 로직
+        }
+
+
     }
 
-    @RabbitListener(queues = "${rabbitmq.queue.name}")
-    public void receiveMessage(MessageSimilarity msg) {
-        amount++;
-        log.info("(MessageSimilarity) Received Message : {} ( Amount : {} )", msg, amount);
-    }
 
 }
