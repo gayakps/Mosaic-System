@@ -1,7 +1,7 @@
 package gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.service;
 
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.MessageSimilarity;
-import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.SuccessUploadMessage;
+import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.UploadState;
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.VideoInfoMessage;
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.top.AbstractMosaicProcessorMessage;
 import lombok.RequiredArgsConstructor;
@@ -46,18 +46,17 @@ public class RabbitMqService {
 
         amount++;
 
-        if (msg instanceof MessageSimilarity) {
-            MessageSimilarity messageSimilarity = (MessageSimilarity) msg;
-            log.info("(MessageSimilarity) Received Message : {} ( Amount : {} )", messageSimilarity, amount);
+        if (msg instanceof MessageSimilarity messageSimilarity) {
+            log.info("(MessageSimilarity) Received Message : {}/{} ( Amount : {} )",msg.getDate(), messageSimilarity, amount);
             // SIMILARITY_INFO 메시지 처리 로직
-        } else if (msg instanceof SuccessUploadMessage) {
-            SuccessUploadMessage successUploadMessage = (SuccessUploadMessage) msg;
-            log.info("(SuccessUploadMessage) Received Message : {} ( Amount : {} )", successUploadMessage, amount);
+        } else if (msg instanceof UploadState uploadState) {
+            log.info("(SuccessUploadMessage) Received Message : {}/{} ( Amount : {} )",msg.getDate() , uploadState, amount);
             // SUCCESS_UPLOAD_MESSAGE 메시지 처리 로직
-        } else if (msg instanceof VideoInfoMessage) {
-            VideoInfoMessage videoInfoMessage = (VideoInfoMessage) msg;
-            log.info("(VideoInfoMessage) Received Message : {} ( Amount : {} )", videoInfoMessage, amount);
+        } else if (msg instanceof VideoInfoMessage videoInfoMessage) {
+            log.info("(VideoInfoMessage) Received Message : {}/{} ( Amount : {} )",msg.getDate() , videoInfoMessage, amount);
             // VIDEO_INFO 메시지 처리 로직
+        } else {
+            log.info("NO ONE Message {}", msg.toString());
         }
 
 

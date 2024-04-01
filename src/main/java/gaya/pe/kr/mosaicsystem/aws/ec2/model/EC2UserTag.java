@@ -5,6 +5,7 @@ import gaya.pe.kr.mosaicsystem.video.entities.UserSuccessUploadNotify;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 public class EC2UserTag {
 
@@ -28,11 +29,15 @@ public class EC2UserTag {
     //    - "aws s3 cp s3://%bucket_name%/%user_id%/'%file_name%' /home/ubuntu/'%file_name%'"
     //    - "다운로드 완료"
     public void addLines(List<String> list, String bucketName, UserSuccessUploadNotify userSuccessUploadNotify) {
+
+        //"python3 test.py %user_id% %video_id% %video_file_name%"
+
         for (String s : list) {
             s = s
                     .replace("%time%", TimeUtil.getNow())
-                    .replace("%file_name%", userSuccessUploadNotify.getUserVideo().getFileName())
+                    .replace("%video_file_name%", userSuccessUploadNotify.getUserVideo().getFileName() )
                     .replace("%bucket_name%", bucketName)
+                    .replace("%video_id%", UUID.randomUUID().toString())
                     .replace("%user_id%", userSuccessUploadNotify.getUserVideo().getUserId());
 
             addLine(s);
