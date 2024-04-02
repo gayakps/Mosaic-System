@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 @RestController
@@ -35,15 +36,17 @@ public class VideoUploadController {
     public ResponseEntity<String> generateURL(@RequestBody UserUploadRequest userUploadRequest) {
         String fileName = userUploadRequest.getUserVideo().getFileName().replace("/", "_");
         String userId = userUploadRequest.getUserVideo().getUserId();
-        URL url = awsServiceManager.getAwss3Manager().generatePreSignedURL(userId, fileName);
-        logger.info("파일 명 : {} USER ID : {} URL : {}", fileName, userId, url);
+        URL url = awsServiceManager.getAwss3Manager().generatePreSignedURL(awsServiceManager.getS3Client(), userId, fileName);
+        logger.info("파일 명 : {} USER ID : {} URL : {} URL 에 대한 Object Video Id {}", fileName, userId, url, awsServiceManager.getAwss3Manager().getAwss3UserDataRepository().getValue(url));
         return ResponseEntity.ok(url.toString());
     }
 
     @PostMapping("/success-upload-file")
     public ResponseEntity<?> successUploadRawVideo(@RequestBody UserSuccessUploadNotify userSuccessUploadNotify) {
-        logger.info("File Name : {} User ID : {}", userSuccessUploadNotify.getUserVideo().getFileName(), userSuccessUploadNotify.getUserVideo().getUserId());
-        awsServiceManager.getAwsec2Manager().createEC2Instance(userSuccessUploadNotify, awsServiceManager.getEc2Client(), "Test-" + new Random().nextInt(1000) + 1);
+        URL url = userSuccessUploadNotify.getUrl();
+        int videoId = awsServiceManager.getAwss3Manager().getAwss3UserDataRepository().getValue(userSuccessUploadNotify.getUrl()).orElse(-1);
+        logger.info("File Name : {} User ID : {} URL {} Video Id {} ", userSuccessUploadNotify.getUserVideo().getFileName(), userSuccessUploadNotify.getUserVideo().getUserId(), url, videoId);
+        awsServiceManager.getAwsec2Manager().createEC2Instance(userSuccessUploadNotify, awsServiceManager.getEc2Client(), "Test-" + new Random().nextInt(1000) + 1,videoId);
         return ResponseEntity.ok().build();
     }
 

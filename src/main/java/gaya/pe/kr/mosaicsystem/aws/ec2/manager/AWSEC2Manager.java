@@ -42,14 +42,14 @@ public class AWSEC2Manager {
     }
 
     @Nullable
-    public Instance createEC2Instance(UserSuccessUploadNotify userSuccessUploadNotify, Ec2Client ec2Client, String name) {
+    public Instance createEC2Instance(UserSuccessUploadNotify userSuccessUploadNotify, Ec2Client ec2Client, String name, int videoId) {
 
         EC2UserTag ec2UserTag = new EC2UserTag();
 
         logger.info("@@@@ TEST(S3 INFO) :: {} @@@@", s3Configuration.toString());
         logger.info("@@@@ TEST(EC2 INFO) :: {} @@@@", ec2Configuration.toString());
 
-        ec2UserTag.addLines(ec2Configuration.getUserTag(), s3Configuration.getRawVideoContentsMosaicUserUploadBucketName(), userSuccessUploadNotify);
+        ec2UserTag.addLines(ec2Configuration.getUserTag(), s3Configuration.getRawVideoContentsMosaicUserUploadBucketName(), userSuccessUploadNotify, videoId);
 
         IamInstanceProfileSpecification iamInstanceProfile = IamInstanceProfileSpecification.builder()
                 .name(ec2Configuration.getIamRoleName())  // IAM 역할 이름 지정

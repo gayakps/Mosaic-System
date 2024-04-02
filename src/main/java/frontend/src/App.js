@@ -3,6 +3,7 @@ import SlideUpOnView from "./animation/SlideUpOnView";
 import GrowWidthOnView from "./animation/GrowWidthOnView";
 import myImage from './css/logo512.png'
 import myImage2 from './css/logo192.png'
+import RawVideoFileUpload from "./pages/RawVideoFileUpload";
 
 
 function App() {
@@ -39,6 +40,14 @@ function App() {
               <br/>
               <hr/>
           </div>
+
+          <SlideUpOnView>
+              <RawVideoFileUpload/>
+              <br/>
+              <br/>
+              <hr/>
+
+          </SlideUpOnView>
 
           <SlideUpOnView>
               <img src={myImage2} alt="description" /> <br/>

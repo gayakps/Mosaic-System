@@ -9,8 +9,10 @@ ec2:
   user-tag:
     - "sudo apt update"
     - "sudo apt install -y awscli"
-    - "echo '(%time%) %user_id% 님의 새로운 파일인 %file_name% 을 다운로드 합니다'"
-#    - "python3 test.py %user_id% %video_id% %video_file_name%"
-    - "aws s3 cp s3://%bucket_name%/%user_id%/'%file_name%' /home/ubuntu/source/'%file_name%'" # 파일 다운로드
-    - "mkdir /home/ubuntu/result" # Result 파일 생성
-    - "echo '다운로드 완료'"
+    - "echo '(%time%) %user_id% 님의 새로운 파일인 %file_name% 을 처리하기 위해 준비합니다'"
+    - "echo python 파일 실행 파라미터 User Id = %user_id% Video Id = %video_id% Video File Name = %video_file_name% "
+    - "python3 test.py \"%user_id%\" %video_id% \"%video_file_name%\""
+    - "echo 모든 작업 완료"
+#    - "aws s3 cp s3://%bucket_name%/%user_id%/'%file_name%' /home/ubuntu/source/'%file_name%'" # 파일 다운로드
+#    - "mkdir /home/ubuntu/result" # Result 파일 생성
+#    - "echo '다운로드 완료'"

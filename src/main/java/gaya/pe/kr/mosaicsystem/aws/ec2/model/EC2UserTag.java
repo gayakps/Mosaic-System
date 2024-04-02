@@ -28,7 +28,7 @@ public class EC2UserTag {
     //    - "(%time%) echo %user_id% 님의 새로운 파일인 %file_name% 을 다운로드 합니다"
     //    - "aws s3 cp s3://%bucket_name%/%user_id%/'%file_name%' /home/ubuntu/'%file_name%'"
     //    - "다운로드 완료"
-    public void addLines(List<String> list, String bucketName, UserSuccessUploadNotify userSuccessUploadNotify) {
+    public void addLines(List<String> list, String bucketName, UserSuccessUploadNotify userSuccessUploadNotify, int videoId) {
 
         //"python3 test.py %user_id% %video_id% %video_file_name%"
 
@@ -37,7 +37,7 @@ public class EC2UserTag {
                     .replace("%time%", TimeUtil.getNow())
                     .replace("%video_file_name%", userSuccessUploadNotify.getUserVideo().getFileName() )
                     .replace("%bucket_name%", bucketName)
-                    .replace("%video_id%", UUID.randomUUID().toString())
+                    .replace("%video_id%", String.valueOf(videoId))
                     .replace("%user_id%", userSuccessUploadNotify.getUserVideo().getUserId());
 
             addLine(s);

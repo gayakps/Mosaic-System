@@ -9,7 +9,8 @@ function RawVideoFileUpload() {
     const [uploadPercentage, setUploadPercentage] = useState(0); // 업로드 진행률을 추적하는 상태 변수
     const [cancelUpload, setCancelUpload] = useState(null); // 취소 토큰 상태
 
-    const userId = uuidv4();
+    // const userId = uuidv4();
+    const userId = 'test-Kim_Seonwoo'
 
     useEffect(() => {
         // 컴포넌트 언마운트 시 실행될 로직
@@ -108,10 +109,12 @@ function RawVideoFileUpload() {
                     userVideo: {
                         fileName: file.name,
                         userId: userId
-                    }
+                    },
+                    url: presignedUrl
                 }
 
-                const response = await axios.post('http://localhost:8080/api/success-upload-file', userSuccessFileData,{
+                const response = await axios.post('http://localhost:8080/api/success-upload-file'
+                    , userSuccessFileData,{
                     headers: {
                         'Content-Type': 'application/json'
                     }
