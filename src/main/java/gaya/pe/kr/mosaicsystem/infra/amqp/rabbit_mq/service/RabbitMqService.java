@@ -1,6 +1,7 @@
 package gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.service;
 
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.MessageSimilarity;
+import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.ResultFileURL;
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.UploadState;
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.VideoInfoMessage;
 import gaya.pe.kr.mosaicsystem.infra.amqp.rabbit_mq.message.top.AbstractMosaicProcessorMessage;
@@ -55,7 +56,10 @@ public class RabbitMqService {
         } else if (msg instanceof VideoInfoMessage videoInfoMessage) {
             log.info("(VideoInfoMessage) Received Message : {}/{} ( Amount : {} )",msg.getDate() , videoInfoMessage, amount);
             // VIDEO_INFO 메시지 처리 로직
-        } else {
+        } else if (msg instanceof ResultFileURL resultFileURL) {
+            log.info("(ResultFileURL) Received Message : {}/{} ( Amount : {} )",msg.getDate() , resultFileURL, amount);
+        }
+        else {
             log.info("NO ONE Message {}", msg.toString());
         }
 

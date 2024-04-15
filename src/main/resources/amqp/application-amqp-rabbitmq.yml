@@ -1,5 +1,5 @@
 network:
-  host: localhost # RabbitMQ host ip
+  host: 43.203.46.2 # RabbitMQ host ip
   port: 5672 # RabbitMQ port
   username : gayasoft # RabbitMQ 웹 관리 콘솔 아이디
   password: 153456 # RabbitMQ 웹 관리 콘솔 비밀번호

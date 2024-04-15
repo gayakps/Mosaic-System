@@ -4,7 +4,9 @@ public enum MessageType {
 
     UPLOAD_STATE,
     SIMILARITY_INFO,
-    VIDEO_INFO
+    VIDEO_INFO,
+
+    RESULT_FILE_URL
 
 
 }

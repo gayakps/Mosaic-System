@@ -3,6 +3,7 @@ package gaya.pe.kr.mosaicsystem.aws.ec2.manager;
 import gaya.pe.kr.mosaicsystem.aws.ec2.configuration.EC2Configuration;
 import gaya.pe.kr.mosaicsystem.aws.ec2.model.EC2UserTag;
 import gaya.pe.kr.mosaicsystem.aws.s3.configuration.S3Configuration;
+import gaya.pe.kr.mosaicsystem.infra.util.LogColor;
 import gaya.pe.kr.mosaicsystem.video.controller.VideoUploadController;
 import gaya.pe.kr.mosaicsystem.video.entities.UserSuccessUploadNotify;
 import jakarta.annotation.Nullable;
@@ -57,13 +58,15 @@ public class AWSEC2Manager {
 
         RunInstancesRequest runRequest = RunInstancesRequest.builder()
                 .imageId(ec2Configuration.getImageId())
-                .instanceType(InstanceType.valueOf(ec2Configuration.getInstanceType().toUpperCase(Locale.ROOT)))
+                .
+                .instanceType(InstanceType.valueOf(ec2Configuration.getInstanceType().toUpperCase(Locale.ROOT).replace(".", "_")))
                 .maxCount(ec2Configuration.getMaxCount())
                 .minCount(ec2Configuration.getMinCount())
                 .securityGroups(ec2Configuration.getSecurityGroup())
                 .ebsOptimized(ec2Configuration.isEbsOptimized())
                 .userData(ec2UserTag.getValue())
                 .iamInstanceProfile(iamInstanceProfile)
+                .keyName("Mosaic-Python-AMI-Key-Pair")
                 .build();
 
         RunInstancesResponse response = ec2Client.runInstances(runRequest);
@@ -84,7 +87,12 @@ public class AWSEC2Manager {
 
         try {
             ec2Client.createTags(tagRequest);
-            logger.info("Mosaic-EC2-{} Start InstanceId-{} UserId-{} File_Name-{}", name, instanceId, userSuccessUploadNotify.getUserVideo().getUserId(), userSuccessUploadNotify.getUserVideo().getFileName());
+            logger.info("Mosaic-EC2-{} Start InstanceId-{} UserId-{} File_Name-{}",
+                    LogColor.addColor(name, LogColor.GREEN),
+                    LogColor.addColor(instanceId, LogColor.YELLOW),
+                    LogColor.addColor(userSuccessUploadNotify.getUserVideo().getUserId(), LogColor.RED),
+                    LogColor.addColor(userSuccessUploadNotify.getUserVideo().getFileName(), LogColor.BLUE)
+            );
             return instance;
         } catch (Ec2Exception e) {
             System.err.println(e.awsErrorDetails().errorMessage());

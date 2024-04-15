@@ -1,17 +1,20 @@
 ec2:
-  image-id: ami-0f3a440bbcff3d043
-  instance-type: T2_MICRO
+  image-id: ami-04da6cfcee83053cd # Mosaic-Python-AMI
+  instance-type: t2.large
   max-count: 1
   min-count: 1
   iam-role-name: Mosaic_EC2_S3_Full_Access
   security-group: MosaicUserAdd
   ebs-optimized: false
   user-tag:
-    - "sudo apt update"
-    - "sudo apt install -y awscli"
+#    - "sudo apt update"
+#    - "sudo apt install -y awscli"
     - "echo '(%time%) %user_id% 님의 새로운 파일인 %file_name% 을 처리하기 위해 준비합니다'"
     - "echo python 파일 실행 파라미터 User Id = %user_id% Video Id = %video_id% Video File Name = %video_file_name% "
-    - "python3 test.py \"%user_id%\" %video_id% \"%video_file_name%\""
+    - "cd /home/ubuntu/mosaic/Mosaic-Python" # 경로 이동
+    - "source env/bin/activate" # 가상환경 활성화
+    - "cd /home/ubuntu/mosaic/Mosaic-Python/core" # 경로 이동
+    - "python3.9 video_mosaic_process.py \"%user_id%\" %video_id% \"%video_file_name%\""
     - "echo 모든 작업 완료"
 #    - "aws s3 cp s3://%bucket_name%/%user_id%/'%file_name%' /home/ubuntu/source/'%file_name%'" # 파일 다운로드
 #    - "mkdir /home/ubuntu/result" # Result 파일 생성
