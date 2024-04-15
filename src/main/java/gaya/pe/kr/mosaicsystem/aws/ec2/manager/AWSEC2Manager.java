@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
@@ -37,7 +38,7 @@ public class AWSEC2Manager {
     private final EC2Configuration ec2Configuration;
     private final S3Configuration s3Configuration;
 
-    public AWSEC2Manager(@Autowired EC2Configuration ec2Configuration, @Autowired S3Configuration s3Configuration) {
+    public AWSEC2Manager(@Qualifier("ec2-gaya.pe.kr.mosaicsystem.aws.ec2.configuration.EC2Configuration") @Autowired EC2Configuration ec2Configuration, @Autowired S3Configuration s3Configuration) {
         this.ec2Configuration = ec2Configuration;
         this.s3Configuration = s3Configuration;
     }
@@ -58,7 +59,6 @@ public class AWSEC2Manager {
 
         RunInstancesRequest runRequest = RunInstancesRequest.builder()
                 .imageId(ec2Configuration.getImageId())
-                .
                 .instanceType(InstanceType.valueOf(ec2Configuration.getInstanceType().toUpperCase(Locale.ROOT).replace(".", "_")))
                 .maxCount(ec2Configuration.getMaxCount())
                 .minCount(ec2Configuration.getMinCount())
