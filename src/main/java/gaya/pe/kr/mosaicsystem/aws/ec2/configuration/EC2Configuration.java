@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -19,6 +20,7 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
+
 public class EC2Configuration {
 
    private static final Logger logger = LoggerFactory.getLogger(EC2Configuration.class);

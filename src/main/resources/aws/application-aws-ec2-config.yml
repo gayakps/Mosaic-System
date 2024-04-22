@@ -10,10 +10,11 @@ ec2:
 #    - "sudo apt update"
 #    - "sudo apt install -y awscli"
     - "echo '(%time%) %user_id% 님의 새로운 파일인 %file_name% 을 처리하기 위해 준비합니다'"
-    - "echo python 파일 실행 파라미터 User Id = %user_id% Video Id = %video_id% Video File Name = %video_file_name% "
+    - "echo python 파일 실행 파라미터 User Id = %user_id% Video Id = %video_id% Video File Name = %video_file_name%"
     - "cd /home/ubuntu/mosaic/Mosaic-Python" # 경로 이동
     - "source env/bin/activate" # 가상환경 활성화
     - "cd /home/ubuntu/mosaic/Mosaic-Python/core" # 경로 이동
+    - "export PYTHON=\"/home/ubuntu/mosaic/Mosaic-Python:$PYTHONPATH\"" # 파이썬 경로 실행
     - "python3.9 video_mosaic_process.py \"%user_id%\" %video_id% \"%video_file_name%\""
     - "echo 모든 작업 완료"
 #    - "aws s3 cp s3://%bucket_name%/%user_id%/'%file_name%' /home/ubuntu/source/'%file_name%'" # 파일 다운로드
